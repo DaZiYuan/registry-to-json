@@ -47,6 +47,7 @@ namespace RegistryToJson
             // 获取命令行参数
             string registryPath = "";
             string outputFilePath = "";
+            bool watch = false;
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-r" && i + 1 < args.Length)
@@ -56,6 +57,10 @@ namespace RegistryToJson
                 else if (args[i] == "-o" && i + 1 < args.Length)
                 {
                     outputFilePath = args[i + 1];
+                }
+                else if (args[i] == "-watch")
+                {
+                    watch = true;
                 }
             }
 
@@ -71,6 +76,23 @@ namespace RegistryToJson
                 return;
             }
 
+            if (watch)
+            {
+                while (true)
+                {
+                    Export(registryPath, outputFilePath);
+                    Thread.Sleep(1000);
+                }
+            }
+            else
+            {
+                Export(registryPath, outputFilePath);
+                Console.WriteLine($"Successfully exported the registry to {outputFilePath}");
+            }
+        }
+
+        private static void Export(string registryPath, string outputFilePath)
+        {
             // 将注册表导出到 JSON 文件
             try
             {
@@ -80,7 +102,6 @@ namespace RegistryToJson
                     Dictionary<string, object> registryDict = ParseRegistryKey(registryKey);
                     string json = JsonSerializer.Serialize(registryDict, new JsonSerializerOptions() { WriteIndented = true });
                     File.WriteAllText(outputFilePath, json);
-                    Console.WriteLine($"Successfully exported the registry to {outputFilePath}");
                 }
             }
             catch (Exception ex)
@@ -102,7 +123,7 @@ namespace RegistryToJson
                 value ??= "";
                 if (value is byte[] bytes)
                 {
-                    value = Encoding.UTF8.GetString(bytes);                
+                    value = Encoding.UTF8.GetString(bytes);
                 }
 
                 dict.Add(valueName, value);
