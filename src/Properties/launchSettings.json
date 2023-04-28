@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RegistryToJson": {
+      "commandName": "Project",
+      "commandLineArgs": "-r \"计算机\\HKEY_CURRENT_USER\\SOFTWARE\\Cognosphere\\Star Rail\" -o D:\\star-rail.json"
+    }
+  }
+}
